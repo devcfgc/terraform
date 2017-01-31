@@ -24,6 +24,7 @@ import (
 	"github.com/Azure/go-autorest/autorest/azure"
 	"github.com/hashicorp/terraform/terraform"
 	riviera "github.com/jen20/riviera/azure"
+	"github.com/Azure/azure-sdk-for-go/arm/apimanagement"
 )
 
 // ArmClient contains the handles to all the specific Azure Resource Manager
@@ -61,6 +62,8 @@ type ArmClient struct {
 	vnetPeeringsClient           network.VirtualNetworkPeeringsClient
 	routeTablesClient            network.RouteTablesClient
 	routesClient                 network.RoutesClient
+
+	apiServicesClient      apimanagement.ServicesClient
 
 	cdnProfilesClient  cdn.ProfilesClient
 	cdnEndpointsClient cdn.EndpointsClient
@@ -380,6 +383,12 @@ func (c *Config) getArmClient() (*ArmClient, error) {
 	suc.Authorizer = spt
 	suc.Sender = autorest.CreateSender(withRequestLogging())
 	client.storageUsageClient = suc
+
+	amsc := apimanagement.NewServicesClientWithBaseURI(endpoint, c.SubscriptionID)
+	setUserAgent(&amsc.Client)
+	amsc.Authorizer = spt
+	amsc.Sender = autorest.CreateSender(withRequestLogging())
+	client.apiServicesClient = amsc
 
 	cpc := cdn.NewProfilesClientWithBaseURI(endpoint, c.SubscriptionID)
 	setUserAgent(&cpc.Client)

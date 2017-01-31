@@ -65,6 +65,7 @@ func Provider() terraform.ResourceProvider {
 		ResourcesMap: map[string]*schema.Resource{
 			// These resources use the Azure ARM SDK
 			"azurerm_availability_set":   resourceArmAvailabilitySet(),
+			"azurerm_api_management_service": resourceArmApiManagementService(),
 			"azurerm_cdn_endpoint":       resourceArmCdnEndpoint(),
 			"azurerm_cdn_profile":        resourceArmCdnProfile(),
 			"azurerm_container_registry": resourceArmContainerRegistry(),
@@ -229,6 +230,7 @@ func registerAzureResourceProvidersWithSubscription(providerList []resources.Pro
 	var err error
 	providerRegistrationOnce.Do(func() {
 		providers := map[string]struct{}{
+			"Microsoft.ApiManagement":     struct{}{},
 			"Microsoft.Compute":           struct{}{},
 			"Microsoft.Cache":             struct{}{},
 			"Microsoft.ContainerRegistry": struct{}{},
